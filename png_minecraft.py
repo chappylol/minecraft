@@ -107,9 +107,13 @@ def parse_chunk(chunk):
         maxes = mins
         mod_string = "%s:%s" % (mod_name, mod_path)
 
-        pixel_str = "    { %s,%s,texture=\"%s\"}" % (mins, maxes, mod_string)
+        pixel_str = "    { %s,%s,texture=\"%s\"}," % (mins, maxes, mod_string)
+
+
         chunk_strs.append(pixel_str)
 
+    #remove last ,
+    chunk_strs[-1] = chunk_strs[-1][:-1] #remove comma
     return chunk_strs
 
 def make_2dblock_str(chunk_str):
