@@ -103,8 +103,6 @@ def parse_chunk(chunk):
 
         mins = "%s,%s,%s" % (x,y,15)
         maxes = "%s,%s,%s" % (x,y,1)
-
-        maxes = mins
         mod_string = "%s:%s" % (mod_name, mod_path)
 
         pixel_str = "    { %s,%s,texture=\"%s\"}," % (mins, maxes, mod_string)
