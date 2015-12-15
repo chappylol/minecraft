@@ -102,10 +102,9 @@ def parse_chunk(chunk):
         mod_path = re.sub('\.png.*$','', mod_path)
 
         mins = "%s,%s,%s" % (x,y,0)
-        maxes = "%s,%s,%s" % (x,y,16)
+        maxes = "%s,%s,%s" % (x,y,15)
         mod_string = "%s:%s" % (mod_name, mod_path)
         pixel_str = "    { %s,%s,texture=\"%s\"}," % (mins, maxes, mod_string)
-
 
         chunk_strs.append(pixel_str)
 
