@@ -66,7 +66,6 @@ def get_chunk(cropped, all_images):
     file_pixel_map = OrderedDict()
     for x in range(1,16):
         for y in range(1,16):
-            print x,y
             input_color = cropped.getpixel((x,y))
 
             for filename,image in all_images.items():
@@ -106,7 +105,7 @@ def parse_chunk(chunk):
         mod_path = re.sub('\.png.*$','', mod_path)
 
         mins = "%s,%s,%s" % (x,y,0)
-        maxes = "%s,%s,%s" % (x+1,y+1,16)
+        maxes = "%s,%s,%s" % (x+1,y+1,1)
         mod_string = "%s:%s" % (mod_name, mod_path)
         pixel_str = "    { %s,%s,texture=\"%s\"}," % (mins, maxes, mod_string)
 
