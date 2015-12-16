@@ -28,7 +28,6 @@ def find_images(fromfile=None):
             try:
                 fh = Image.open(filepath.strip())
             except:
-                #print "Bad: %s" % (filepath)
                 continue
 
             size = fh.size
@@ -37,7 +36,7 @@ def find_images(fromfile=None):
                 continue
                     
             elif size[0] != 16 or size[1] != 16:
-                fh = fh.crop((0,0,16,16))
+                fh = fh.crop((0,0,15,15))
 
             images[filepath] = fh
         return images
@@ -56,21 +55,26 @@ def find_images(fromfile=None):
                     continue
                     
                 elif size[0] != 16 or size[1] != 16:
-                    fh = fh.crop((0,0,16,16))
+                    fh = fh.crop((0,0,15,15))
 
                 images[filepath] = fh
 
     return images
 
 def get_chunk(cropped, all_images):
-    #new_image = Image.new('RGB',(16,16))
     new_image = []
     file_pixel_map = OrderedDict()
-    for x in range(0,16):
-        for y in range(0,16):
+    for x in range(1,16):
+        for y in range(1,16):
+            print x,y
             input_color = cropped.getpixel((x,y))
+
             for filename,image in all_images.items():
-                raw_pixel = image.getpixel((x,y))
+                try:
+                    raw_pixel = image.getpixel((x,y))
+                except:
+                    continue
+
                 if type(raw_pixel) != tuple:
                     continue
 
@@ -101,8 +105,8 @@ def parse_chunk(chunk):
         mod_path = filename_split[blocks_pivot + 1]
         mod_path = re.sub('\.png.*$','', mod_path)
 
-        mins = "%s,%s,%s" % (x,y,1)
-        maxes = "%s,%s,%s" % (x,y,16)
+        mins = "%s,%s,%s" % (x,y,0)
+        maxes = "%s,%s,%s" % (x+1,y+1,16)
         mod_string = "%s:%s" % (mod_name, mod_path)
         pixel_str = "    { %s,%s,texture=\"%s\"}," % (mins, maxes, mod_string)
 
@@ -136,8 +140,8 @@ base_image.resize((XSIZE,YSIZE))
 
 all_images = find_images('/tmp/filelist_random.txt')
 
-for xchunk in range(0,XRATIO+1):
-    for ychunk in range(0,YRATIO+1):
+for xchunk in range(1,XRATIO+1):
+    for ychunk in range(1,YRATIO+1):
         x16 = xchunk*16
         y16 = ychunk*16
         chunk_dims = (x16, y16, x16+16, y16+16)
