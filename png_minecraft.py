@@ -89,7 +89,10 @@ def get_chunk(cropped, all_images):
             
     return new_image
 
+#def find_groupings(
+
 def parse_chunk(chunk):
+    #find_groupings(chunk)
     chunk_strs = []
     for xy, filename in chunk:
         x, y = xy
@@ -105,7 +108,7 @@ def parse_chunk(chunk):
         mod_path = re.sub('\.png.*$','', mod_path)
 
         mins = "%s,%s,%s" % (x,y,0)
-        maxes = "%s,%s,%s" % (x+1,y+1,1)
+        maxes = "%s,%s,%s" % (x,y,1)
         mod_string = "%s:%s" % (mod_name, mod_path)
         pixel_str = "    { %s,%s,texture=\"%s\"}," % (mins, maxes, mod_string)
 
