@@ -64,8 +64,8 @@ def find_images(fromfile=None):
 def get_chunk(cropped, all_images):
     new_image = []
     file_pixel_map = OrderedDict()
-    for x in range(1,16):
-        for y in range(1,16):
+    for x in range(0,16):
+        for y in range(0,16):
             input_color = cropped.getpixel((x,y))
 
             for filename,image in all_images.items():
@@ -140,10 +140,10 @@ YSIZE = YRATIO*16
 base_image = Image.open(BASEIMAGE)
 base_image.resize((XSIZE,YSIZE))
 
-all_images = find_images('/tmp/filelist_random.txt')
+all_images = find_images('filelist.txt')
 
-for xchunk in range(1,XRATIO+1):
-    for ychunk in range(1,YRATIO+1):
+for xchunk in range(0,XRATIO+1):
+    for ychunk in range(0,YRATIO+1):
         x16 = xchunk*16
         y16 = ychunk*16
         chunk_dims = (x16, y16, x16+16, y16+16)
