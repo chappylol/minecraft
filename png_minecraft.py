@@ -114,8 +114,11 @@ def parse_chunk(chunk):
 
         mins = "%s,%s,%s" % (x,y,0)
         maxes = "%s,%s,%s" % (x,y,1)
-        #mod_string = "%s:%s" % (mod_name, mod_path)
-        mod_string = "%s" % (mod_path)
+        if mod_name == 'minecraft':
+            mod_string = "%s" % (mod_path)
+        else:
+            mod_string = "%s:%s" % (mod_name, mod_path)
+
         pixel_str = "    { %s,%s,texture=\"%s\"}," % (mins, maxes, mod_string)
 
         chunk_strs.append(pixel_str)
@@ -146,7 +149,7 @@ YSIZE = YRATIO*16
 base_image = Image.open(BASEIMAGE)
 base_image.resize((XSIZE,YSIZE))
 
-all_images = find_images('filelist.txt')
+all_images = find_images('/home/matt/filelist.txt')
 
 for xchunk in range(0,XRATIO+1):
     for ychunk in range(0,YRATIO+1):
