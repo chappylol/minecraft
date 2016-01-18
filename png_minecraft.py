@@ -78,7 +78,6 @@ def get_chunk(cropped, all_images):
                     continue
 
                 #remove alpha - needs better fix.
-                print raw_pixel, filename
                 if len(raw_pixel) > 3:
                     alpha = raw_pixel[3]
                     if alpha > 200:
@@ -115,7 +114,8 @@ def parse_chunk(chunk):
 
         mins = "%s,%s,%s" % (x,y,0)
         maxes = "%s,%s,%s" % (x,y,1)
-        mod_string = "%s:%s" % (mod_name, mod_path)
+        #mod_string = "%s:%s" % (mod_name, mod_path)
+        mod_string = "%s" % (mod_path)
         pixel_str = "    { %s,%s,texture=\"%s\"}," % (mins, maxes, mod_string)
 
         chunk_strs.append(pixel_str)
