@@ -78,6 +78,11 @@ def get_chunk(cropped, all_images):
                     continue
 
                 #remove alpha - needs better fix.
+                if len(raw_pixel) > 3:
+                    alpha = raw_pixel[3]
+                    if alpha < 250:
+                        continue
+
                 pixel = raw_pixel[0:3]
 
                 file_pixel_map[filename] = pixel
