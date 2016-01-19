@@ -26,18 +26,21 @@ def find_images(fromfile=None):
         for filepath in filelist:
             filepath = filepath.strip()
             try:
-                fh = Image.open(filepath.strip())
+                f = open(filepath.strip(),'r')
+                fh = Image.open(f,mode='r')
+                if fh.mode != 'RGB':
+                    f.close()
+                    continue
             except:
+                f.close()
                 continue
 
             size = fh.size
 
-            if size[0] < 16 or size[1] < 16:
+            if size[0] != 16 or size[1] != 16:
+                f.close()
                 continue
                     
-            elif size[0] != 16 or size[1] != 16:
-                fh = fh.crop((0,0,15,15))
-
             images[filepath] = fh
         return images
 
@@ -46,16 +49,27 @@ def find_images(fromfile=None):
         for file in files:
             if re.search('\.png$', file):
                 filepath = os.path.join(root, file)
+                try:
+                    f = open(filepath.strip(),'r')
+                    fh = Image.open(f,mode='r')
+                    if fh.mode != 'RGB':
+                        f.close()
+                        continue
+
+                except:
+                    f.close()
+                    continue
+
                 if '3D' not in filepath:
                     continue
-                fh = Image.open(filepath)
                 size = fh.size
 
-                if size[0] < 16 or size[1] < 16:
+                if size[0] != 16 or size[1] != 16:
+                    f.close()
                     continue
                     
-                elif size[0] != 16 or size[1] != 16:
-                    fh = fh.crop((0,0,15,15))
+                #elif size[0] != 16 or size[1] != 16:
+                #    fh = fh.crop((0,0,15,15))
 
                 images[filepath] = fh
 
@@ -66,29 +80,24 @@ def get_chunk(cropped, all_images):
     file_pixel_map = OrderedDict()
     for x in range(0,16):
         for y in range(0,16):
-            input_color = cropped.getpixel((x,y))
+            input_color = list(cropped.getpixel((x,y)))
+            #print input_color
 
             for filename,image in all_images.items():
-                try:
-                    raw_pixel = image.getpixel((x,y))
-                except:
+                #print filename
+                raw_pixel = image.getpixel((x,y))
+                #print x,y
+                #print raw_pixel
+
+                pixel = list(raw_pixel)
+                if len(pixel) == 4:
                     continue
-
-                if type(raw_pixel) != tuple:
-                    continue
-
-                #remove alpha - needs better fix.
-                if len(raw_pixel) > 3:
-                    alpha = raw_pixel[3]
-                    if alpha > 200:
-                        continue
-
-                pixel = raw_pixel[0:3]
-
+          
                 file_pixel_map[filename] = pixel
     
             tree = sp.KDTree(file_pixel_map.values()) 
             distance, result = tree.query(input_color) 
+            #print distance, result
             nearest_color = file_pixel_map.keys()[result]
             new_image.append(((x,y), nearest_color))
             
@@ -113,7 +122,7 @@ def parse_chunk(chunk):
         mod_path = re.sub('\.png.*$','', mod_path)
 
         mins = "%s,%s,%s" % (x,y,0)
-        maxes = "%s,%s,%s" % (x,y,1)
+        maxes = "%s,%s,%s" % (x+1,y+1,16)
         if mod_name == 'minecraft':
             mod_string = "%s" % (mod_path)
         else:
@@ -136,11 +145,15 @@ def make_2dblock_str(chunk_str):
     block_str.append("  }")
     block_str.append("}")
        
-    for i in block_str:
-        print i
 
-XRATIO=6
-YRATIO=7
+    ret = []
+    for i in block_str:
+        ret.append(i)
+
+    return ret
+
+XRATIO=4
+YRATIO=5
 
 XSIZE = XRATIO*16
 YSIZE = YRATIO*16
@@ -149,7 +162,9 @@ YSIZE = YRATIO*16
 base_image = Image.open(BASEIMAGE)
 base_image.resize((XSIZE,YSIZE))
 
-all_images = find_images('/home/matt/filelist.txt')
+#all_images = find_images('/home/matt/filelist.txt')
+all_images = find_images('AAAA')
+#all_images = find_images('filelist.txt')
 
 for xchunk in range(0,XRATIO+1):
     for ychunk in range(0,YRATIO+1):
@@ -161,8 +176,15 @@ for xchunk in range(0,XRATIO+1):
         chunk = get_chunk(chunk_base, all_images)
         parsed_chunk = parse_chunk(chunk)
 
-        make_2dblock_str(parsed_chunk)
-        sys.exit(0)
+        block_strs = make_2dblock_str(parsed_chunk)
+        block_str = '\n'.join(block_strs)
+
+        outfile_name = "%s_%s.3dm" % (xchunk,ychunk)
+        outfile = open(outfile_name, 'w')
+        outfile.write(block_str)
+        outfile.close()
+
+        #sys.exit(0)
 
         #chunk_file = open('/tmp/%s%s.png' % (xchunk,ychunk), 'w')
         #chunk.save(chunk_file)
