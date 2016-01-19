@@ -9,6 +9,7 @@ from PIL import Image, ImageChops
 import scipy.spatial as sp
 
 BASEIMAGE = sys.argv[1]
+BASEIMAGENAME = BASEIMAGE.split('.')[0]
 
 ROOTDIR = None
 #ROOTDIR = sys.argv[2]
@@ -163,7 +164,7 @@ base_image = Image.open(BASEIMAGE)
 base_image.resize((XSIZE,YSIZE))
 
 #all_images = find_images('/home/matt/filelist.txt')
-all_images = find_images('AAAA')
+all_images = find_images('filelists/AAAA')
 #all_images = find_images('filelist.txt')
 
 for xchunk in range(0,XRATIO+1):
@@ -179,7 +180,7 @@ for xchunk in range(0,XRATIO+1):
         block_strs = make_2dblock_str(parsed_chunk)
         block_str = '\n'.join(block_strs)
 
-        outfile_name = "%s_%s.3dm" % (xchunk,ychunk)
+        outfile_name = "%s_%s_%s.3dm" % (BASEIMAGENAME,xchunk,ychunk)
         outfile = open(outfile_name, 'w')
         outfile.write(block_str)
         outfile.close()
